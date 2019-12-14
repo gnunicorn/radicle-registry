@@ -4,6 +4,7 @@
 //! * [dev] for runnning a single node locally and develop against it.
 //! * [local_devnet] for runnning a cluster of three nodes locally using Aura consensus.
 use aura_primitives::sr25519::AuthorityId as AuraId;
+use grandpa_primitives::AuthorityId as GrandpaId;
 use primitives::{Pair, Public};
 use radicle_registry_runtime::{
     AccountId, AuraConfig, BalancesConfig, GenesisConfig, GrandpaConfig, SudoConfig, SystemConfig,
