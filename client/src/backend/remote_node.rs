@@ -1,7 +1,7 @@
 //! [backend::Backend] implementation for a remote full node
 use futures01::future::Future;
-use sr_primitives::traits::Hash as _;
-use substrate_primitives::storage::StorageKey;
+use sp_core::storage::StorageKey;
+use sp_runtime::traits::Hash as _;
 
 use radicle_registry_runtime::{opaque::Block as OpaqueBlock, Event, Hash, Hashing, Runtime};
 
@@ -91,7 +91,7 @@ impl backend::Backend for RemoteNode {
     }
 }
 
-/// Given an [ExtrinsicSuccess] struct for a transaction and the block the includes the transaction
+/// Given an [ExtrinsicSuccess] struct for a transaction and the block that includes the transaction
 /// return all the events belonging to the transaction.
 ///
 /// Returns `None` if no events for the transaction were found. This should be treated as an error
@@ -112,7 +112,7 @@ fn extract_events(block: OpaqueBlock, ext_success: ExtrinsicSuccess) -> Option<V
         .events
         .iter()
         .filter_map(|event_record| match event_record.phase {
-            paint_system::Phase::ApplyExtrinsic(i) if i == xt_index as u32 => {
+            frame_system::Phase::ApplyExtrinsic(i) if i == xt_index as u32 => {
                 Some(event_record.event.clone())
             }
             _ => None,

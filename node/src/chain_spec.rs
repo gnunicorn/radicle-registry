@@ -4,16 +4,15 @@
 //! * [dev] for runnning a single node locally and develop against it.
 //! * [local_devnet] for runnning a cluster of three nodes locally using Aura consensus.
 use aura_primitives::sr25519::AuthorityId as AuraId;
-use grandpa_primitives::AuthorityId as GrandpaId;
+use sc_finality_grandpa::AuthorityId as GrandpaId;
 use primitives::{Pair, Public};
 use radicle_registry_runtime::{
     AccountId, AuraConfig, BalancesConfig, GenesisConfig, GrandpaConfig, SudoConfig, SystemConfig,
     WASM_BINARY,
 };
-use substrate_finality_grandpa_primitives::AuthorityId as GrandpaId;
 
 /// Specialized `ChainSpec`. This is a specialization of the general Substrate ChainSpec type.
-pub type ChainSpec = substrate_service::ChainSpec<GenesisConfig>;
+pub type ChainSpec = sc_service::ChainSpec<GenesisConfig>;
 
 pub fn from_id(id: &str) -> Option<ChainSpec> {
     if id == "dev" {
@@ -54,7 +53,7 @@ fn dev_genesis_config() -> GenesisConfig {
             code: WASM_BINARY.to_vec(),
             changes_trie_config: Default::default(),
         }),
-        paint_balances: Some(BalancesConfig {
+        pallet_balances: Some(BalancesConfig {
             balances: endowed_accounts
                 .iter()
                 .cloned()
@@ -62,11 +61,11 @@ fn dev_genesis_config() -> GenesisConfig {
                 .collect(),
             vesting: vec![],
         }),
-        paint_sudo: Some(SudoConfig { key: root_key }),
-        paint_aura: Some(AuraConfig {
+        pallet_sudo: Some(SudoConfig { key: root_key }),
+        pallet_aura: Some(AuraConfig {
             authorities: aura_authorities,
         }),
-        paint_grandpa: Some(GrandpaConfig {
+        pallet_grandpa: Some(GrandpaConfig {
             authorities: grandpa_authorities,
         }),
     }
@@ -109,7 +108,7 @@ fn local_dev_genesis_config() -> GenesisConfig {
             code: WASM_BINARY.to_vec(),
             changes_trie_config: Default::default(),
         }),
-        paint_balances: Some(BalancesConfig {
+        pallet_balances: Some(BalancesConfig {
             balances: endowed_accounts
                 .iter()
                 .cloned()
@@ -117,11 +116,11 @@ fn local_dev_genesis_config() -> GenesisConfig {
                 .collect(),
             vesting: vec![],
         }),
-        paint_sudo: Some(SudoConfig { key: root_key }),
-        paint_aura: Some(AuraConfig {
+        pallet_sudo: Some(SudoConfig { key: root_key }),
+        pallet_aura: Some(AuraConfig {
             authorities: aura_authorities,
         }),
-        paint_grandpa: Some(GrandpaConfig {
+        pallet_grandpa: Some(GrandpaConfig {
             authorities: grandpa_authorities,
         }),
     }

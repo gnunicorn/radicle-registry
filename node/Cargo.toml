@@ -7,7 +7,8 @@ version = "0.1.0"
 [dependencies]
 derive_more = "0.15.0"
 exit-future = "0.1.4"
-futures = "0.1.29"
+futures = "0.3.1"
+futures01 = { package = "futures", version = "0.1.29" }
 log = "0.4.8"
 parking_lot = "0.9.0"
 tokio = "0.1.22"
@@ -26,65 +27,75 @@ path = "../runtime"
 
 [dependencies.aura]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
-package = "substrate-consensus-aura"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
+package = "sc-consensus-aura"
 
 [dependencies.aura-primitives]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
-package = "substrate-consensus-aura-primitives"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
+package = "sp-consensus-aura"
 
 [dependencies.basic-authorship]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
-package = "substrate-basic-authorship"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
+package = "sc-basic-authority"
 
 [dependencies.inherents]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
-package = "substrate-inherents"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
+package = "sp-inherents"
 
 [dependencies.network]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
-package = "substrate-network"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
+package = "sc-network"
 
 [dependencies.primitives]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
-package = "substrate-primitives"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
+package = "sp-core"
 
-[dependencies.sr-io]
+[dependencies.sp-io]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
 
-[dependencies.substrate-cli]
+[dependencies.sc-cli]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
 
-[dependencies.substrate-client]
+[dependencies.sc-client]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
 
-[dependencies.substrate-executor]
+[dependencies.sc-executor]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
 
-[dependencies.substrate-service]
+[dependencies.sc-service]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
 
-[dependencies.transaction-pool]
+[dependencies.txpool]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
-package = "substrate-transaction-pool"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
+package = "sc-transaction-pool"
 
-[dependencies.substrate-finality-grandpa]
+[dependencies.txpool-api]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
-package = "substrate-finality-grandpa"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
+package = "sp-transaction-pool"
 
-[dependencies.substrate-finality-grandpa-primitives]
+[dependencies.sc-finality-grandpa]
 git = "https://github.com/paritytech/substrate"
-rev = "dc4a8329b9c47790c25429a5df272b3648275c1b"
-package = "substrate-finality-grandpa-primitives"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
+package = "sc-finality-grandpa"
+
+[dependencies.sp-finality-grandpa]
+git = "https://github.com/paritytech/substrate"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
+package = "sp-finality-grandpa"
+
+[dependencies.consensus-common]
+git = "https://github.com/paritytech/substrate"
+rev = "9f4c7b788b047661de28e9a3fc750af877efc155"
+package = "sp-consensus"
