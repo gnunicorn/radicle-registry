@@ -15,6 +15,7 @@
 
 //! [backend::Backend] implementation for a remote full node
 use futures01::future::Future;
+use futures03::compat::Future01CompatExt as _;
 use sr_primitives::traits::Hash as _;
 use substrate_primitives::storage::StorageKey;
 
@@ -32,18 +33,17 @@ pub struct RemoteNode {
 type ExtrinsicSuccess = substrate_subxt::ExtrinsicSuccess<Runtime>;
 
 impl RemoteNode {
-    pub fn create() -> impl Future<Item = Self, Error = Error> {
-        substrate_subxt::ClientBuilder::<Runtime>::new()
+    pub async fn create() -> Result<Self, Error> {
+        let subxt_client = substrate_subxt::ClientBuilder::<Runtime>::new()
             .build()
-            .and_then(|subxt_client| {
-                subxt_client
-                    .connect()
-                    .and_then(|rpc| rpc.genesis_hash())
-                    .map(|genesis_hash| RemoteNode {
-                        subxt_client,
-                        genesis_hash,
-                    })
-            })
+            .compat()
+            .await?;
+        let rpc = subxt_client.connect().compat().await?;
+        let genesis_hash = rpc.genesis_hash().compat().await?;
+        Ok(RemoteNode {
+            subxt_client,
+            genesis_hash,
+        })
     }
 
     /// Returns the list of events dispatched by the extrinsic.
@@ -67,38 +67,29 @@ impl RemoteNode {
     }
 }
 
+#[async_trait::async_trait]
 impl backend::Backend for RemoteNode {
-    fn submit(
+    async fn submit(
         &self,
         extrinsic: backend::UncheckedExtrinsic,
-    ) -> Response<backend::TransactionApplied, Error> {
-        let client = self.clone();
-        Box::new(
-            self.subxt_client
-                .connect()
-                .and_then(move |rpc| rpc.submit_and_watch_extrinsic(extrinsic))
-                .and_then(move |ext_success| {
-                    let tx_hash = ext_success.extrinsic;
-                    let block = ext_success.block;
-                    client.extract_events(ext_success).map(move |events| {
-                        backend::TransactionApplied {
-                            tx_hash,
-                            block,
-                            events,
-                        }
-                    })
-                }),
-        )
+    ) -> Result<backend::TransactionApplied, Error> {
+        let rpc = self.subxt_client.connect().compat().await?;
+        let ext_success = rpc.submit_and_watch_extrinsic(extrinsic).compat().await?;
+        let tx_hash = ext_success.extrinsic;
+        let block = ext_success.block;
+        let events = self.extract_events(ext_success).compat().await?;
+        Ok(backend::TransactionApplied {
+            tx_hash,
+            block,
+            events,
+        })
     }
 
-    fn fetch(&self, key: &[u8]) -> Response<Option<Vec<u8>>, Error> {
+    async fn fetch(&self, key: &[u8]) -> Result<Option<Vec<u8>>, Error> {
         let key = StorageKey(Vec::from(key));
-        Box::new(self.subxt_client.connect().and_then(move |rpc| {
-            rpc.state
-                .storage(key, None)
-                .map_err(Error::from)
-                .map(|maybe_data| maybe_data.map(|data| data.0))
-        }))
+        let rpc = self.subxt_client.connect().compat().await?;
+        let maybe_data = rpc.state.storage(key, None).compat().await?;
+        Ok(maybe_data.map(|data| data.0))
     }
 
     fn get_genesis_hash(&self) -> Hash {
