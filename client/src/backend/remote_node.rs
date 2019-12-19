@@ -14,7 +14,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 //! [backend::Backend] implementation for a remote full node
-use futures01::future::Future;
 use futures03::compat::Future01CompatExt as _;
 use sr_primitives::traits::Hash as _;
 use substrate_primitives::storage::StorageKey;
@@ -52,18 +51,16 @@ impl RemoteNode {
     /// From this list we return only those events that were dispatched by the extinsic.
     ///
     /// Requires an API call to get the block
-    fn extract_events(
-        &self,
-        ext_success: ExtrinsicSuccess,
-    ) -> impl Future<Item = Vec<Event>, Error = Error> {
-        self.subxt_client
+    async fn extract_events(&self, ext_success: ExtrinsicSuccess) -> Result<Vec<Event>, Error> {
+        let maybe_signed_block = self
+            .subxt_client
             .block(Some(ext_success.block))
-            .and_then(move |maybe_signed_block| {
-                let block = maybe_signed_block.unwrap().block;
-                // TODO panic and explain
-                extract_events(block, ext_success)
-                    .ok_or_else(|| Error::from("Extrinsic not found in block"))
-            })
+            .compat()
+            .await?;
+        let block = maybe_signed_block.unwrap().block;
+        // TODO panic and explain
+        extract_events(block, ext_success)
+            .ok_or_else(|| Error::from("Extrinsic not found in block"))
     }
 }
 
@@ -77,7 +74,7 @@ impl backend::Backend for RemoteNode {
         let ext_success = rpc.submit_and_watch_extrinsic(extrinsic).compat().await?;
         let tx_hash = ext_success.extrinsic;
         let block = ext_success.block;
-        let events = self.extract_events(ext_success).compat().await?;
+        let events = self.extract_events(ext_success).await?;
         Ok(backend::TransactionApplied {
             tx_hash,
             block,
